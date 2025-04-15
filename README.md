@@ -1,4 +1,4 @@
-# PHP-Firewall-Script Php 5.x
+# PHP-Firewall-Script Php 5.x - 7.x
 PHP Firewall is a small free PHP script, but secure all websites writen in PHP.
 
 PHP Firewall required PHP 5.x
@@ -30,5 +30,5 @@ https://dijitalsite.com.tr
 We will add the code to the header section of your site.
 
 define('PHP_FIREWALL_REQUEST_URI', filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL));
-define('PHP_FIREWALL_ACTIVATION', true );
+define('PHP_FIREWALL_ACTIVATION', true);
 include_once('firewall/firewall.php');
