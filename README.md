@@ -30,5 +30,5 @@ https://dijitalsite.com.tr
 We will add the code to the header section of your site.
 
 define('PHP_FIREWALL_REQUEST_URI', filter_var($_SERVER['REQUEST_URI'], FILTER_SANITIZE_URL));
-define('PHP_FIREWALL_ACTIVATION', true );
+define('PHP_FIREWALL_ACTIVATION', true);
 include_once('firewall/firewall.php');
