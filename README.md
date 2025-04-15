@@ -1,4 +1,4 @@
-# PHP-Firewall-Script Php 5.x
+# PHP-Firewall-Script Php 5.x - 7.x
 PHP Firewall is a small free PHP script, but secure all websites writen in PHP.
 
 PHP Firewall required PHP 5.x
