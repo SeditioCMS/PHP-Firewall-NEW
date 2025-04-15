@@ -79,7 +79,6 @@ if ( PHP_FIREWALL_LANGUAGE === 'turkish' ) {
 }
 /** END LANGUAGE*/
 
-
 if ( PHP_FIREWALL_ACTIVATION === true ) {
 
 function PHP_FIREWALL_unset_globals() {
@@ -127,21 +126,18 @@ function PHP_FIREWALL_get_env($st_var) {
     // Apache ortam değişkeni (Apache kullanıyorsanız)
     elseif (function_exists('apache_getenv') && apache_getenv($st_var, true)) {
         return strip_tags(apache_getenv($st_var, true));
-    }
-    
+    }   
     // Değer bulunamazsa boş döndürülür
     return '';
 }
 
 function PHP_FIREWALL_get_referer() {
     // HTTP_REFERER var mı kontrol et
-    $referer = PHP_FIREWALL_get_env('HTTP_REFERER');
-    
+    $referer = PHP_FIREWALL_get_env('HTTP_REFERER');   
     // Eğer referer varsa ve geçerliyse, temizleyerek geri döndür
     if ($referer) {
         return strip_tags($referer);
-    }
-    
+    }    
     // Eğer referer yoksa, 'no referer' döndür
     return 'no referer';
 }
@@ -163,49 +159,39 @@ function PHP_FIREWALL_get_referer() {
         return PHP_FIREWALL_get_env('REMOTE_ADDR');
     }
 }
-
 	
 	function PHP_FIREWALL_get_user_agent() {
     // HTTP_USER_AGENT başlığını kontrol et
-    $user_agent = PHP_FIREWALL_get_env('HTTP_USER_AGENT');
-    
+    $user_agent = PHP_FIREWALL_get_env('HTTP_USER_AGENT');   
     // Eğer başlık mevcutsa, temizleyip döndür
     if ($user_agent) {
         return strip_tags($user_agent);
-    }
-    
+    }   
     // Eğer başlık yoksa, 'none' döndür
     return 'none';
 }
 
 	function PHP_FIREWALL_get_query_string() {
     // QUERY_STRING'i al
-    $query_string = PHP_FIREWALL_get_env('QUERY_STRING');
-    
+    $query_string = PHP_FIREWALL_get_env('QUERY_STRING');    
     // Eğer sorgu dizisi varsa, tab karakterlerini boşlukla değiştirip temizle
     if ($query_string) {
         // Tab karakterini (%09) boşlukla (%20) değiştir
-        $query_string = str_replace('%09', '%20', $query_string);
-        
+        $query_string = str_replace('%09', '%20', $query_string);        
         // Temizlik (güvenlik için HTML etiketlerini temizle)
         return strip_tags($query_string);
-    }
-    
+    } 
     // Eğer sorgu dizisi yoksa, boş döndür
     return '';
 }
 
-	
-	
 	function PHP_FIREWALL_get_request_method() {
     // REQUEST_METHOD başlığını al
-    $request_method = PHP_FIREWALL_get_env('REQUEST_METHOD');
-    
+    $request_method = PHP_FIREWALL_get_env('REQUEST_METHOD');   
     // Eğer başlık mevcutsa, olduğu gibi döndür
     if ($request_method) {
         return $request_method;  // Büyük-küçük harfe duyarlı şekilde döndürülür
     }
-    
     // Eğer başlık yoksa, 'none' döndür
     return 'none';
 }
@@ -239,18 +225,16 @@ function PHP_FIREWALL_get_referer() {
     return null;
 }
 
-
 	/** bases define */
-define('PHP_FIREWALL_GET_QUERY_STRING', strtolower(PHP_FIREWALL_get_query_string()));
-define('PHP_FIREWALL_USER_AGENT', PHP_FIREWALL_get_user_agent());
-define('PHP_FIREWALL_GET_IP', PHP_FIREWALL_get_ip());
-define('PHP_FIREWALL_GET_HOST', PHP_FIREWALL_gethostbyaddr());
-define('PHP_FIREWALL_GET_REFERER', PHP_FIREWALL_get_referer());
-define('PHP_FIREWALL_GET_REQUEST_METHOD', PHP_FIREWALL_get_request_method());
-define('PHP_FIREWALL_REGEX_UNION','#\w?\s?union\s\w*?\s?(select|all|distinct|insert|update|drop|delete)#is');
-
+	define('PHP_FIREWALL_GET_QUERY_STRING', strtolower(PHP_FIREWALL_get_query_string()));
+	define('PHP_FIREWALL_USER_AGENT', PHP_FIREWALL_get_user_agent());
+	define('PHP_FIREWALL_GET_IP', PHP_FIREWALL_get_ip());
+	define('PHP_FIREWALL_GET_HOST', PHP_FIREWALL_gethostbyaddr());
+	define('PHP_FIREWALL_GET_REFERER', PHP_FIREWALL_get_referer());
+	define('PHP_FIREWALL_GET_REQUEST_METHOD', PHP_FIREWALL_get_request_method());
+	define('PHP_FIREWALL_REGEX_UNION','#\w?\s?union\s\w*?\s?(select|all|distinct|insert|update|drop|delete)#is');
 	
-	FUNCTION PHP_FIREWALL_push_email( $subject, $msg ) {
+	function PHP_FIREWALL_push_email( $subject, $msg ) {
 		$headers = "From: PHP Firewall: ".PHP_FIREWALL_ADMIN_MAIL." <".PHP_FIREWALL_ADMIN_MAIL.">\r\n"
 			."Reply-To: ".PHP_FIREWALL_ADMIN_MAIL."\r\n"
 			."Priority: urgent\r\n"
@@ -270,7 +254,7 @@ define('PHP_FIREWALL_REGEX_UNION','#\w?\s?union\s\w*?\s?(select|all|distinct|ins
 	}
 
 
-function PHP_FIREWALL_LOGS($type) {
+	function PHP_FIREWALL_LOGS($type) {
     // Log dosyasının bulunduğu dizini kontrol et
     $logFilePath = dirname(__FILE__) . '/' . PHP_FIREWALL_LOG_FILE . '.txt';
     
@@ -305,35 +289,28 @@ function PHP_FIREWALL_LOGS($type) {
     }
 }
 
-
-if (PHP_FIREWALL_PROTECTION_SERVER_OVH === true) {
+	if (PHP_FIREWALL_PROTECTION_SERVER_OVH === true) {
     // 'ovh' kelimesini host içinde büyük/küçük harfe duyarsız şekilde kontrol et
     if (stristr(PHP_FIREWALL_GET_HOST, 'ovh')) {
         // Log kaydını oluştur
-        PHP_FIREWALL_LOGS('OVH Server list');
-        
+        PHP_FIREWALL_LOGS('OVH Server list');     
         // OVH sunucu tespiti sonrası işlem sonlandırılır
         die(_PHPF_PROTECTION_OVH);
     }
 }
 
-if (PHP_FIREWALL_PROTECTION_SERVER_OVH_BY_IP === true) {
+	if (PHP_FIREWALL_PROTECTION_SERVER_OVH_BY_IP === true) {
     // IP'yi parçalarına ayır
     $ip = explode('.', PHP_FIREWALL_GET_IP);
-
     // İki oktetli IP aralıklarını kontrol et
     $ovh_ips = array('87.98', '91.121', '94.23', '213.186', '213.251');
     if (in_array($ip[0] . '.' . $ip[1], $ovh_ips)) {
         // Log kaydını oluştur
         PHP_FIREWALL_LOGS('OVH Server IP');
-
         // İşlemi sonlandır
         die(_PHPF_PROTECTION_OVH);
     }
 }
-
-
-
 
 	if ( PHP_FIREWALL_PROTECTION_SERVER_KIMSUFI === true ) {
 		if ( stristr( PHP_FIREWALL_GET_HOST ,'kimsufi') ) {
@@ -342,16 +319,16 @@ if (PHP_FIREWALL_PROTECTION_SERVER_OVH_BY_IP === true) {
 		}
 	}
 
-// DEDIBOX Server Kontrolü
-if (PHP_FIREWALL_PROTECTION_SERVER_DEDIBOX === true) {
+	// DEDIBOX Server Kontrolü
+	if (PHP_FIREWALL_PROTECTION_SERVER_DEDIBOX === true) {
     if (stristr(PHP_FIREWALL_GET_HOST, 'dedibox')) {
         PHP_FIREWALL_LOGS('DEDIBOX Server list');
         die(_PHPF_PROTECTION_DEDIBOX);
     }
 }
 
-// DEDIBOX IP Kontrolü
-if (PHP_FIREWALL_PROTECTION_SERVER_DEDIBOX_BY_IP === true) {
+	// DEDIBOX IP Kontrolü
+	if (PHP_FIREWALL_PROTECTION_SERVER_DEDIBOX_BY_IP === true) {
     $ip = explode('.', PHP_FIREWALL_GET_IP);
     $dedibox_ips = ['88.191'];  // IP'leri diziye alıyoruz
     if (in_array($ip[0] . '.' . $ip[1], $dedibox_ips)) {
@@ -360,16 +337,16 @@ if (PHP_FIREWALL_PROTECTION_SERVER_DEDIBOX_BY_IP === true) {
     }
 }
 
-// DIGICUBE Server Kontrolü
-if (PHP_FIREWALL_PROTECTION_SERVER_DIGICUBE === true) {
+	// DIGICUBE Server Kontrolü
+	if (PHP_FIREWALL_PROTECTION_SERVER_DIGICUBE === true) {
     if (stristr(PHP_FIREWALL_GET_HOST, 'digicube')) {
         PHP_FIREWALL_LOGS('DIGICUBE Server list');
         die(_PHPF_PROTECTION_DIGICUBE);
     }
 }
 
-// DIGICUBE IP Kontrolü
-if (PHP_FIREWALL_PROTECTION_SERVER_DIGICUBE_BY_IP === true) {
+	// DIGICUBE IP Kontrolü
+	if (PHP_FIREWALL_PROTECTION_SERVER_DIGICUBE_BY_IP === true) {
     $ip = explode('.', PHP_FIREWALL_GET_IP);
     $digicube_ips = ['95.130'];  // IP'leri diziye alıyoruz
     if (in_array($ip[0] . '.' . $ip[1], $digicube_ips)) {
@@ -378,9 +355,8 @@ if (PHP_FIREWALL_PROTECTION_SERVER_DIGICUBE_BY_IP === true) {
     }
 }
 
-
 	// Spam IP Kontrolü
-if (PHP_FIREWALL_PROTECTION_RANGE_IP_SPAM === true) {
+	if (PHP_FIREWALL_PROTECTION_RANGE_IP_SPAM === true) {
     $spam_ips = array('24', '186', '189', '190', '200', '201', '202', '209', '212', '213', '217', '222');
     $range_ip = explode('.', PHP_FIREWALL_GET_IP);
     if (in_array($range_ip[0], $spam_ips)) {
@@ -389,8 +365,8 @@ if (PHP_FIREWALL_PROTECTION_RANGE_IP_SPAM === true) {
     }
 }
 
-// Deny IP Kontrolü
-if (PHP_FIREWALL_PROTECTION_RANGE_IP_DENY === true) {
+	// Deny IP Kontrolü
+	if (PHP_FIREWALL_PROTECTION_RANGE_IP_DENY === true) {
     $deny_ips = array('0', '1', '2', '5', '10', '14', '23', '27', '31', '36', '37', '39', '42', '46', '49', '50', '100', '101', '102', '103', '104', '105', '106', '107', '114', '172', '176', '177', '179', '181', '185', '192', '223', '224');
     $range_ip = explode('.', PHP_FIREWALL_GET_IP);
     if (in_array($range_ip[0], $deny_ips)) {
@@ -398,33 +374,6 @@ if (PHP_FIREWALL_PROTECTION_RANGE_IP_DENY === true) {
         die(_PHPF_PROTECTION_SPAM_IP);
     }
 }
-
-
-if ( PHP_FIREWALL_PROTECTION_COOKIES === true ) {
-    $ct_rules = Array(
-        'applet', 'base', 'bgsound', 'blink', 'embed', 'expression', 'frame', 'javascript', 'layer', 'link', 'meta', 
-        'object', 'onabort', 'onactivate', 'onafterprint', 'onafterupdate', 'onbeforeactivate', 'onbeforecopy', 'onbeforecut', 
-        'onbeforedeactivate', 'onbeforeeditfocus', 'onbeforepaste', 'onbeforeprint', 'onbeforeunload', 'onbeforeupdate', 'onblur', 
-        'onbounce', 'oncellchange', 'onchange', 'onclick', 'oncontextmenu', 'oncontrolselect', 'oncopy', 'oncut', 'ondataavailable', 
-        'ondatasetchanged', 'ondatasetcomplete', 'ondblclick', 'ondeactivate', 'ondrag', 'ondragend', 'ondragenter', 'ondragleave', 
-        'ondragover', 'ondragstart', 'ondrop', 'onerror', 'onerrorupdate', 'onfilterchange', 'onfinish', 'onfocus', 'onfocusin', 
-        'onfocusout', 'onhelp', 'onkeydown', 'onkeypress', 'onkeyup', 'onlayoutcomplete', 'onload', 'onlosecapture', 'onmousedown', 
-        'onmouseenter', 'onmouseleave', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousewheel', 'onmove', 'onmoveend', 
-        'onmovestart', 'onpaste', 'onpropertychange', 'onreadystatechange', 'onreset', 'onresizeend', 'onresizestart', 'onrowenter', 
-        'onrowexit', 'onrowsdelete', 'onrowsinserted', 'onscroll', 'onselect', 'onselectionchange', 'onselectstart', 'onstart', 'onstop', 
-        'onsubmit', 'onunload', 'script', 'style', 'title', 'vbscript', 'xml'
-    );
-
-    foreach($_COOKIE as $cookie_name => $value) {
-        $check = str_replace($ct_rules, '*', $value);
-        if($value !== $check) {
-            PHP_FIREWALL_LOGS('Cookie protect');
-            unset($_COOKIE[$cookie_name]);  // Cookie'yi kaldır
-            setcookie($cookie_name, '', time() - 3600, '/'); // Geçersizleştir ve tarayıcıda sil
-        }
-    }
-}
-
 
 	if ( PHP_FIREWALL_PROTECTION_COOKIES === true ) {
     $ct_rules = Array(
@@ -442,6 +391,7 @@ if ( PHP_FIREWALL_PROTECTION_COOKIES === true ) {
     );
     
     // Cookie koruması
+	if ( PHP_FIREWALL_PROTECTION_COOKIES === true ) {
     foreach ($_COOKIE as $cookie_name => $value) {
         $check = str_replace($ct_rules, '*', $value);
         if ($value !== $check) {
@@ -450,6 +400,7 @@ if ( PHP_FIREWALL_PROTECTION_COOKIES === true ) {
             setcookie($cookie_name, '', time() - 3600, '/'); // Tarayıcıdan sil
         }
     }
+}
 
     // POST verisi koruması
     if (PHP_FIREWALL_PROTECTION_POST === true) {
@@ -474,9 +425,7 @@ if ( PHP_FIREWALL_PROTECTION_COOKIES === true ) {
     }
 }
 
-
 	/** protection de l'url */
-	
 	if ( PHP_FIREWALL_PROTECTION_URL === true ) {
     $ct_rules = array(
         'absolute_path', 'ad_click', 'alert(', 'alert%20', ' and ', 'basepath', 'bash_history', '.bash_history', 'cgi-', 
@@ -587,18 +536,13 @@ if ( PHP_FIREWALL_PROTECTION_COOKIES === true ) {
         '*/limit/*', 'not123exists*', '*/radminsuper/*', '*/select/*', '+select+', '%20select%20', 'select ',
         '+union+', '%20union%20', '*/union/*', 'union', '*/update/*', '*/where/*'
     );
-
-    $check = str_replace($ct_rules, '*', PHP_FIREWALL_GET_QUERY_STRING );
-    
+	$check = str_replace($ct_rules, '*', PHP_FIREWALL_GET_QUERY_STRING );
     // Belirlenen zararlı ifadelerle birebir eşleşme varsa
     if( PHP_FIREWALL_GET_QUERY_STRING != $check ) $stop++;
-
     // Regex ile UNION içeren saldırı denemeleri
     if (preg_match(PHP_FIREWALL_REGEX_UNION, PHP_FIREWALL_GET_QUERY_STRING)) $stop++;
-
     // Garip karakter dizileri varsa (örnek: base64 benzeri)
     if (preg_match('/([OdWo5NIbpuU4V2iJT0n]{5}) /', rawurldecode( PHP_FIREWALL_GET_QUERY_STRING ))) $stop++;
-
     // Query string içinde yıldız (*) varsa — obfuscation işareti olabilir
     if (strstr(rawurldecode( PHP_FIREWALL_GET_QUERY_STRING ) ,'*')) $stop++;
 
@@ -622,7 +566,6 @@ if ( PHP_FIREWALL_PROTECTION_COOKIES === true ) {
 
 	// GET query string'i önce decode edelim ki kodlanmış içerikleri de yakalayalım
 	$decoded_query = rawurldecode(PHP_FIREWALL_GET_QUERY_STRING);
-
 	// Zararlı içerik varsa * ile değiştirerek karşılaştır
 	$check = str_replace($ct_rules, '*', strtolower($decoded_query));
 
@@ -660,7 +603,6 @@ if ( PHP_FIREWALL_PROTECTION_COOKIES === true ) {
 
 	// Query string'i decode edip küçük harfe çeviriyoruz
 	$decoded_query = strtolower(rawurldecode(PHP_FIREWALL_GET_QUERY_STRING));
-
 	$check = str_replace($ct_rules, '*', $decoded_query);
 
 	if ( $decoded_query !== $check ) {
