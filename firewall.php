@@ -299,16 +299,25 @@ function PHP_FIREWALL_get_referer() {
     }
 }
 
-	if (PHP_FIREWALL_PROTECTION_SERVER_OVH_BY_IP === true) {
+// OVH Server IP Kontrolü
+if (PHP_FIREWALL_PROTECTION_SERVER_OVH_BY_IP === true) {
     // IP'yi parçalarına ayır
     $ip = explode('.', PHP_FIREWALL_GET_IP);
-    // İki oktetli IP aralıklarını kontrol et
-    $ovh_ips = array('87.98', '91.121', '94.23', '213.186', '213.251');
-    if (in_array($ip[0] . '.' . $ip[1], $ovh_ips)) {
-        // Log kaydını oluştur
-        PHP_FIREWALL_LOGS('OVH Server IP');
-        // İşlemi sonlandır
-        die(_PHPF_PROTECTION_OVH);
+
+    // IP'nin geçerli olduğundan emin ol
+    if (count($ip) >= 2) {
+        // İki oktetli IP aralıklarını kontrol et
+        $ovh_ips = array('87.98', '91.121', '94.23', '213.186', '213.251');
+        if (in_array($ip[0] . '.' . $ip[1], $ovh_ips)) {
+            // Log kaydını oluştur
+            PHP_FIREWALL_LOGS('OVH Server IP');
+            // İşlemi sonlandır
+            die(_PHPF_PROTECTION_OVH);
+        }
+    } else {
+        // Geçersiz IP adresi formatı
+        PHP_FIREWALL_LOGS('Geçersiz OVH IP formatı');
+        die('Geçersiz IP adresi');
     }
 }
 
@@ -327,13 +336,21 @@ function PHP_FIREWALL_get_referer() {
     }
 }
 
-	// DEDIBOX IP Kontrolü
-	if (PHP_FIREWALL_PROTECTION_SERVER_DEDIBOX_BY_IP === true) {
+// DEDIBOX IP Kontrolü
+if (PHP_FIREWALL_PROTECTION_SERVER_DEDIBOX_BY_IP === true) {
     $ip = explode('.', PHP_FIREWALL_GET_IP);
-    $dedibox_ips = ['88.191'];  // IP'leri diziye alıyoruz
-    if (in_array($ip[0] . '.' . $ip[1], $dedibox_ips)) {
-        PHP_FIREWALL_LOGS('DEDIBOX Server IP');
-        die(_PHPF_PROTECTION_DEDIBOX_IP);
+
+    // IP'nin geçerli olduğundan emin ol
+    if (count($ip) >= 2) {
+        $dedibox_ips = ['88.191'];  // IP'leri diziye alıyoruz
+        if (in_array($ip[0] . '.' . $ip[1], $dedibox_ips)) {
+            PHP_FIREWALL_LOGS('DEDIBOX Server IP');
+            die(_PHPF_PROTECTION_DEDIBOX_IP);
+        }
+    } else {
+        // Geçersiz IP adresi formatı
+        PHP_FIREWALL_LOGS('Geçersiz DEDIBOX IP formatı');
+        die('Geçersiz IP adresi');
     }
 }
 
@@ -345,13 +362,21 @@ function PHP_FIREWALL_get_referer() {
     }
 }
 
-	// DIGICUBE IP Kontrolü
-	if (PHP_FIREWALL_PROTECTION_SERVER_DIGICUBE_BY_IP === true) {
+// DIGICUBE IP Kontrolü
+if (PHP_FIREWALL_PROTECTION_SERVER_DIGICUBE_BY_IP === true) {
     $ip = explode('.', PHP_FIREWALL_GET_IP);
-    $digicube_ips = ['95.130'];  // IP'leri diziye alıyoruz
-    if (in_array($ip[0] . '.' . $ip[1], $digicube_ips)) {
-        PHP_FIREWALL_LOGS('DIGICUBE Server IP');
-        die(_PHPF_PROTECTION_DIGICUBE_IP);
+
+    // IP'nin geçerli olduğundan emin ol
+    if (count($ip) >= 2) {
+        $digicube_ips = ['95.130'];  // IP'leri diziye alıyoruz
+        if (in_array($ip[0] . '.' . $ip[1], $digicube_ips)) {
+            PHP_FIREWALL_LOGS('DIGICUBE Server IP');
+            die(_PHPF_PROTECTION_DIGICUBE_IP);
+        }
+    } else {
+        // Geçersiz IP adresi formatı
+        PHP_FIREWALL_LOGS('Geçersiz DIGICUBE IP formatı');
+        die('Geçersiz IP adresi');
     }
 }
 
@@ -575,31 +600,28 @@ function PHP_FIREWALL_get_referer() {
 	}
 }
 
-
-
-
 	/** protection XSS attack */
 	if ( PHP_FIREWALL_PROTECTION_XSS_ATTACK === true ) {
 	$ct_rules = array(
-		'http://', 'https://',
-		'ftp:', 'ftps:', './', '../',
-		'cmd=', '&cmd', 'exec', 'concat', 'select', 'union', 'insert', 'drop', 'update', 'delete', 'alter', 'rename', 'create', 'from', 'into', 'load_file', 'outfile', 'grant', 'revoke', 'set', 'declare', 'show', 'table', 'database',
+    'http://', 'https://',
+    'ftp:', 'ftps:', './', '../',
+    'cmd=', '&cmd', 'exec', 'concat', 'select', 'union', 'insert', 'drop', 'update', 'delete', 'alter', 'rename', 'create', 'from', 'into', 'load_file', 'outfile', 'grant', 'revoke', 'set', 'declare', 'show', 'table', 'database',
 
-		// Obfuscated versiyonlar
-		'h%20ttp:', 'ht%20tp:', 'htt%20p:', 'http%20:', '.php?url='
-		'h%20ttps:', 'ht%20tps:', 'htt%20ps:', 'http%20s:', 'https%20:',
-		'f%20tp:', 'ft%20p:', 'ftp%20:', 'f%20tps:', 'ft%20ps:', 'ftp%20s:', 'ftps%20:',
+    // Obfuscated versiyonlar
+    'h%20ttp:', 'ht%20tp:', 'htt%20p:', 'http%20:', '.php?url=', 'https:', 'ht%20tps:', 'htt%20ps:', 'http%20s:', 'https%20:',
+    'f%20tp:', 'ft%20p:', 'ftp%20:', 'f%20tps:', 'ft%20ps:', 'ftp%20s:', 'ftps%20:',
 
-		// JS injection içerikleri
-		'<script', '%3Cscript', '%3C%73cript', // encoded script tag
-		'onerror', 'onload', 'onclick', 'onmouseover', // event handler'lar
-		'document.cookie', 'document.location',
-		'javascript:', 'vbscript:', 'data:',
+    // JS injection içerikleri
+    '<script', '%3Cscript', '%3C%73cript',
+    'onerror', 'onload', 'onclick', 'onmouseover',
+    'document.cookie', 'document.location',
+    'javascript:', 'vbscript:', 'data:',
 
-		// Base64 encoded bazı yaygın örnekler
-		'c2NyaXB0', // base64 "script"
-		'amF2YXNjcmlwdA==', // base64 "javascript"
-	);
+    // Base64 encoded bazı yaygın örnekler
+    'c2NyaXB0',
+    'amF2YXNjcmlwdA==',
+);
+
 
 	// Query string'i decode edip küçük harfe çeviriyoruz
 	$decoded_query = strtolower(rawurldecode(PHP_FIREWALL_GET_QUERY_STRING));
