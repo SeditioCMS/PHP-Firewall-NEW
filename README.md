@@ -193,6 +193,132 @@ if ($firewall->isWhitelisted($_SERVER['REMOTE_ADDR'])) {
 
 ---
 
+## Bot Blocking (botlist.php)
+
+The firewall includes a comprehensive bot blocking system with 200+ known bad bots.
+
+### Basic Bot Blocking
+
+```php
+<?php
+// Include botlist after firewall
+include_once('firewall/firewall.php');
+include_once('firewall/botlist.php');
+
+// Check and block bad bots
+if (check_bot_user_agent()) {
+    // Bot detected - already logged, optionally redirect
+    header('HTTP/1.1 403 Forbidden');
+    exit('Access Denied');
+}
+```
+
+### Bot Categories
+
+The botlist includes these categories:
+
+| Category | Examples |
+|----------|----------|
+| **Vulnerability Scanners** | sqlmap, nikto, nuclei, wpscan, dirsearch, gobuster |
+| **AI/LLM Scrapers** | GPTBot, ClaudeBot, Anthropic-AI, ByteSpider, Perplexity |
+| **Modern Scrapers** | Scrapy, Puppeteer, Playwright, Selenium, PhantomJS |
+| **SEO Bots** | AhrefsBot, SemrushBot, MJ12bot, DotBot, SimilarWeb |
+| **Spam Bots** | XRumer, ScrapeBox, GSA Search Engine Ranker |
+| **Proxy Services** | Brightdata, Oxylabs, Smartproxy |
+| **Credential Tools** | Hydra, Medusa, CrackMapExec |
+
+### Whitelist Good Bots
+
+Allow legitimate bots (Google, Bing, etc.):
+
+```php
+<?php
+// Define whitelist before including botlist
+$bot_whitelist = [
+    'Googlebot',
+    'Bingbot', 
+    'YandexBot',
+    'DuckDuckBot',
+    'Slurp',           // Yahoo
+    'facebot',         // Facebook
+    'Twitterbot',
+    'LinkedInBot',
+];
+
+include_once('firewall/botlist.php');
+
+// Check with whitelist support
+$user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+$is_bad_bot = false;
+
+foreach ($bot_whitelist as $good_bot) {
+    if (stripos($user_agent, $good_bot) !== false) {
+        $is_bad_bot = false;
+        break;
+    }
+}
+
+if (!$is_bad_bot && check_bot_user_agent()) {
+    header('HTTP/1.1 403 Forbidden');
+    exit('Access Denied');
+}
+```
+
+### Custom Bot Rules
+
+Add your own bot patterns:
+
+```php
+<?php
+// Add custom patterns to the botlist array
+$custom_bad_bots = [
+    'MyCustomBot',
+    'AnotherBadBot',
+];
+
+// Merge with existing list
+$php_firewall_bad_bots = array_merge($php_firewall_bad_bots, $custom_bad_bots);
+```
+
+### Bot Statistics
+
+Get information about blocked bots:
+
+```php
+<?php
+$stats = get_bot_list_stats();
+
+echo "Total bot patterns: " . $stats['total_patterns'];
+echo "Categories: " . implode(', ', $stats['categories']);
+echo "Last updated: " . $stats['last_updated'];
+```
+
+### .htaccess Alternative (Apache)
+
+For Apache servers, you can also block bots via .htaccess:
+
+```apache
+# Block bad bots via .htaccess
+RewriteEngine On
+RewriteCond %{HTTP_USER_AGENT} (sqlmap|nikto|nuclei|wpscan) [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} (GPTBot|ClaudeBot|Anthropic) [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} (AhrefsBot|SemrushBot|MJ12bot) [NC]
+RewriteRule .* - [F,L]
+```
+
+### Nginx Alternative
+
+For Nginx servers:
+
+```nginx
+# Block bad bots via nginx
+if ($http_user_agent ~* (sqlmap|nikto|nuclei|wpscan|GPTBot|ClaudeBot|AhrefsBot)) {
+    return 403;
+}
+```
+
+---
+
 ## Log Files
 
 The firewall creates logs in the configured log directory:
