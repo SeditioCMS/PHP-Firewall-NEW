@@ -25,7 +25,7 @@ No .htaccess file required for betters performances.
 16. IPs range protected
 17. PHP globals desctruction
 
-https://dijitalsite.com.tr
+https://seditio.com.tr
 
 We will add the code to the header section of your site.
 
